@@ -1,0 +1,10 @@
+{
+  "name": "paper-to-code",
+  "version": "0.1.0",
+  "description": "Reimplement a research paper's method in Python with a developer -> reviewer agent loop: tests first on synthetic data, results presented in jupytext-paired notebooks, reviewed against the paper by a read-only reviewer.",
+  "author": {
+    "name": "Mark Borg"
+  },
+  "license": "MIT",
+  "keywords": ["research", "paper", "reimplementation", "notebooks", "code-review", "agents"]
+}

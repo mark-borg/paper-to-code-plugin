@@ -1,0 +1,14 @@
+{
+  "name": "paper-to-code",
+  "description": "Single-plugin marketplace for the paper-to-code plugin.",
+  "owner": {
+    "name": "Mark Borg"
+  },
+  "plugins": [
+    {
+      "name": "paper-to-code",
+      "source": "./",
+      "description": "Reimplement a research paper's method in Python with a developer -> reviewer agent loop."
+    }
+  ]
+}

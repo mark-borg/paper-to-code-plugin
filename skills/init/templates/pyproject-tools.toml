@@ -1,0 +1,17 @@
+# Append to pyproject.toml (skip any table that already exists).
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+extend-exclude = ["*.ipynb"]  # lint the paired .py files; jupytext syncs them into the .ipynb
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "NPY"]
+
+[tool.jupytext]
+# Pair every notebook with a percent-format .py file (same name, same folder).
+# The .py file is the reviewable source; the .ipynb holds the outputs.
+formats = "ipynb,py:percent"

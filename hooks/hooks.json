@@ -1,0 +1,16 @@
+{
+  "description": "Keep the paper-to-code reviewer agent read-only: block any Bash command it runs that is not on a read-only allowlist.",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/reviewer_readonly.py\""
+          }
+        ]
+      }
+    ]
+  }
+}

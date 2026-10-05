@@ -1,0 +1,76 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## Purpose
+
+This is a "paper to code" exercise. The goal is to reimplement, in Python, the method in `{{PDF_FILENAME}}`:
+{{CITATION}}.
+The paper is the spec. When behaviour is ambiguous, read the relevant section of the PDF before deciding.
+Record any interpretation you make in a code comment that cites the section or equation number.
+
+{{AVAILABILITY}}
+<!-- e.g. "The paper's datasets and reference code are not available, so validate the implementation on
+synthetic data (see Expected results)." State what exists, with links, and whether the agents may use it. -->
+
+## Commands
+
+The environment is managed with uv (Python {{PYTHON_VERSION}}, pinned in `.python-version`). The package is `src/{{PACKAGE}}`.
+
+```bash
+uv sync                                  # create/update .venv from uv.lock
+uv add <pkg>  /  uv add --dev <pkg>      # add a dependency (never pip install)
+uv run pytest                            # run all tests (testpaths = tests/)
+uv run pytest tests/test_x.py::test_name # run a single test
+uv run ruff check . --fix                # lint (rules: E,F,I,B,UP,NPY; line length 100)
+uv run ruff format .                     # format
+
+uv run jupytext --sync --execute notebooks/NN_name.py  # sync .py → .ipynb and re-run it in a fresh kernel
+uv run pytest --nbmake notebooks/        # execute every notebook as a test (does not write outputs)
+uv run jupyter lab                       # interactive use; kernel "python3" is the project .venv
+```
+
+## Code layout: package + notebooks
+
+The code is presented as Jupyter notebooks, backed by a tested package:
+- **`src/{{PACKAGE}}/`**: the reusable maths (the method, plus synthetic data generation), unit-tested in `tests/`.
+  Notebooks import from it. They never redefine its functions or copy them between notebooks.
+- **`notebooks/NN_name.ipynb`**: numbered narrative notebooks that walk through the paper section by section with figures
+  ({{NOTEBOOK_PLAN}}). Outputs **are committed**, because the figures are the reproduction results.
+- Every notebook is **paired by jupytext** with `notebooks/NN_name.py` (percent format; see `[tool.jupytext]` in pyproject).
+  **Edit the `.py` file, never the `.ipynb` JSON**, then run `jupytext --sync --execute` on it. The `.py` file is what ruff lints
+  (`*.ipynb` is excluded) and what reviewers read. To view rendered figures, read the `.ipynb`.
+- `tests/test_notebooks.py` fails if a pair is out of sync or if outputs don't come from one top-to-bottom run. It cannot detect stale outputs
+  after a `--sync` without `--execute`, so always use `--execute`.
+
+## The method
+
+<!-- What the code must implement, section by section, citing the paper's equations. State the data layout and
+array conventions (shapes, which axis is which), the core algorithm, numerical requirements (e.g. "never form the P×P
+matrix", "fix the sign convention deterministically"), and any interpretation decisions already made. -->
+{{METHOD}}
+
+## Expected results
+
+<!-- What a correct implementation should reproduce, taken from the paper's results and figures, with the paper's
+numbers where available. Then: how synthetic data should be built to test it (which sources or effects to mix),
+and what tests should check. -->
+{{EXPECTED_RESULTS}}
+
+## Fidelity checklist
+
+<!-- Paper-specific items the reviewer checks against the code, one line each, citing Eq./Sec. Keep it to things
+that are checkable from the code and outputs. -->
+{{FIDELITY_CHECKLIST}}
+
+## Developer / reviewer agents
+
+Implementation work goes through the `paper-to-code` plugin's two subagents:
+- `paper-to-code:developer`: writes tests first on synthetic data, implements in the package, presents the results in notebooks,
+  runs ruff/pytest/nbmake, and hands back a structured report. Never commits.
+- `paper-to-code:reviewer`: reviews the uncommitted diff against the paper and returns `VERDICT: APPROVE | CHANGES_REQUESTED`
+  with evidence-backed findings. It is read-only: it has no Edit/Write tools, and the plugin's PreToolUse hook blocks any of its
+  Bash commands that are not on a read-only allowlist.
+- `/paper-to-code:dev-review <task>` is the user-invoked orchestrator. The main session alternates developer → reviewer for up to
+  3 rounds, resuming the same developer and starting a fresh reviewer each round. It leaves changes uncommitted, and requires at least
+  one commit and a clean working tree at the start, so the reviewer only sees the task's changes.

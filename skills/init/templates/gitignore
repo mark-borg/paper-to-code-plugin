@@ -1,0 +1,20 @@
+# Python
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environment
+.venv
+
+# Tooling caches
+.pytest_cache/
+.ruff_cache/
+
+# Generated outputs / local data
+outputs/
+data/
+.DS_Store
+.ipynb_checkpoints/
