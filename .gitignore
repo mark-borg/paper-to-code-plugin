@@ -2,6 +2,10 @@ __pycache__/
 *.py[oc]
 .DS_Store
 
+# Tooling caches
+.pytest_cache/
+.ruff_cache/
+
 # Claude Code local state
 .claude/*.lock
 .claude/settings.local.json

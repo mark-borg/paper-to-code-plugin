@@ -5,6 +5,8 @@
   "author": {
     "name": "Mark Borg"
   },
+  "homepage": "https://github.com/mark-borg/paper-to-code-plugin",
+  "repository": "https://github.com/mark-borg/paper-to-code-plugin",
   "license": "MIT",
   "keywords": ["research", "paper", "reimplementation", "notebooks", "code-review", "agents"]
 }

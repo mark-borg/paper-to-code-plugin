@@ -43,16 +43,17 @@ implements and that the reviewer checks against.
 
 ## Install
 
-To try it for a single session:
-```bash
-claude --plugin-dir /path/to/paper-to-code-plugin
+The repo is also its own single-plugin marketplace  (`.claude-plugin/marketplace.json`). To install 
+it from GitHub, run in Claude Code:
+```
+/plugin marketplace add mark-borg/paper-to-code-plugin
+/plugin install paper-to-code@paper-to-code
 ```
 
-To install it permanently: the repo is also its own single-plugin marketplace
-(`.claude-plugin/marketplace.json`), so run:
-```
-/plugin marketplace add /path/to/paper-to-code-plugin
-/plugin install paper-to-code@paper-to-code
+To try it for a single session without installing, clone it and point Claude Code to the folder:
+```bash
+git clone https://github.com/mark-borg/paper-to-code-plugin.git
+claude --plugin-dir ./paper-to-code-plugin
 ```
 
 ## Typical use
@@ -73,8 +74,9 @@ commit after each approval, then collects the leftover non-blocking findings int
   acts only for `paper-to-code:reviewer`. To debug it, set
   `PAPER_TO_CODE_HOOK_DEBUG=/tmp/hook.log` before starting Claude Code; each Bash call's `agent_type`
   and verdict are appended to that file.
-- The guard fails closed. If the hook errors on a reviewer command, the command is blocked, because
-  Claude Code only blocks on exit code 2 and treats any other failure as "allow".
+- The guard fails closed: if an exception occurs while checking a reviewer command, the script catches
+  it and exits 2, so the command is blocked. (Claude Code blocks only on exit code 2; any other
+  non-zero exit is treated as "allow", so the script must exit 2 explicitly on error.)
 - The allowlist assumes the uv/pytest/ruff toolchain. If a project's `CLAUDE.md` defines other
   checks, the reviewer reports them as "not run (blocked by hook)" and the orchestrator runs them. To
   let the reviewer run them itself, extend `segment_allowed` in `hooks/reviewer_readonly.py`.
